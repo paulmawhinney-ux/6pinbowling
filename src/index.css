@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+
+:root {
+  /* Lane wood + scoreboard palette */
+  --walnut: #2B2118;
+  --walnut-light: #3D2F22;
+  --paper: #F5E6C8;
+  --paper-light: #FAFAF7;
+  --pin-red: #C84B31;
+  --lane-green: #1B4D3E;
+  --brass: #E8C547;
+  --ink: #241B14;
+  --ink-soft: #6B5D4F;
+
+  --display: 'Oswald', sans-serif;
+  --body: 'Inter', sans-serif;
+  --data: 'JetBrains Mono', monospace;
+
+  color-scheme: light;
+  font-family: var(--body);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--walnut);
+}
+
+#root {
+  min-height: 100svh;
+  background: var(--walnut);
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      var(--walnut) 0px,
+      var(--walnut-light) 2px,
+      var(--walnut) 4px,
+      var(--walnut) 40px
+    );
+}
+
+button {
+  font-family: var(--body);
+  cursor: pointer;
+}
+
+input {
+  font-family: var(--body);
+}
