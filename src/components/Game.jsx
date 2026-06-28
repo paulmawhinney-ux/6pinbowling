@@ -1,10 +1,12 @@
 import { useState, useMemo, useCallback } from 'react';
 import ScoreSheet from './ScoreSheet';
 import PinEntry from './PinEntry';
+import EditThrowModal from './EditThrowModal';
 import {
   createEmptyFrames,
   addThrow,
   removeLastThrow,
+  editThrow,
   computeScores,
   finalScore,
   currentFrameIndex,
@@ -17,6 +19,7 @@ export default function Game({ playerNames, onGameComplete, onAbandon }) {
     playerNames.map((name) => ({ name, frames: createEmptyFrames() }))
   );
   const [activePlayerIdx, setActivePlayerIdx] = useState(0);
+  const [editTarget, setEditTarget] = useState(null); // { playerIdx, frameIdx, throwIdx } | null
 
   const allScores = useMemo(
     () => playersState.map((p) => computeScores(p.frames)),
@@ -80,6 +83,32 @@ export default function Game({ playerNames, onGameComplete, onAbandon }) {
     }
   }
 
+  // Skip bowler: jump turn order to the next player without recording
+  // anything for the currently-active player.
+  function handleSkipBowler() {
+    if (gameOver) return;
+    const next = advanceTurn(activePlayerIdx, playersState);
+    setActivePlayerIdx(next);
+  }
+
+  function handleThrowClick(playerIdx, frameIdx, throwIdx) {
+    setEditTarget({ playerIdx, frameIdx, throwIdx });
+  }
+
+  function handleEditSave(newPins) {
+    if (!editTarget) return;
+    const { playerIdx, frameIdx, throwIdx } = editTarget;
+    try {
+      const newFrames = editThrow(playersState[playerIdx].frames, frameIdx, throwIdx, newPins);
+      setPlayersState((prev) =>
+        prev.map((p, i) => (i === playerIdx ? { ...p, frames: newFrames } : p))
+      );
+    } catch {
+      // Invalid edit (shouldn't normally happen since the modal only offers valid options) - ignore.
+    }
+    setEditTarget(null);
+  }
+
   function handleFinishGame() {
     const game = {
       id: Date.now().toString(),
@@ -111,6 +140,7 @@ export default function Game({ playerNames, onGameComplete, onAbandon }) {
             scores={allScores[idx]}
             activeFrameIndex={idx === activePlayerIdx ? activeFrameIdx : -1}
             isActivePlayer={idx === activePlayerIdx && !gameOver}
+            onThrowClick={(frameIdx, throwIdx) => handleThrowClick(idx, frameIdx, throwIdx)}
           />
         ))}
       </div>
@@ -119,6 +149,11 @@ export default function Game({ playerNames, onGameComplete, onAbandon }) {
         <div className="current-turn-banner">
           <span className="current-turn-name">{activePlayer.name}&apos;s turn</span>
           <span className="current-turn-frame">Frame {activeFrameIdx + 1}</span>
+          {playersState.length > 1 && (
+            <button type="button" className="skip-bowler-btn" onClick={handleSkipBowler}>
+              Skip ⏭
+            </button>
+          )}
         </div>
       )}
 
@@ -146,6 +181,21 @@ export default function Game({ playerNames, onGameComplete, onAbandon }) {
             Save to history
           </button>
         </div>
+      )}
+
+      {editTarget && (
+        <EditThrowModal
+          frames={playersState[editTarget.playerIdx].frames}
+          frameIndex={editTarget.frameIdx}
+          throwIndex={editTarget.throwIdx}
+          currentValue={
+            playersState[editTarget.playerIdx].frames[editTarget.frameIdx].throws[
+              editTarget.throwIdx
+            ]
+          }
+          onSave={handleEditSave}
+          onCancel={() => setEditTarget(null)}
+        />
       )}
     </div>
   );
