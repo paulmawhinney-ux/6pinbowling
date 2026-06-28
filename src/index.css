@@ -1,16 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
 
 :root {
-  /* Lane wood + scoreboard palette */
-  --walnut: #2B2118;
-  --walnut-light: #3D2F22;
-  --paper: #F5E6C8;
-  --paper-light: #FAFAF7;
-  --pin-red: #C84B31;
-  --lane-green: #1B4D3E;
-  --brass: #E8C547;
-  --ink: #241B14;
-  --ink-soft: #6B5D4F;
+  /* Blue / black / gray scoreboard palette */
+  --walnut: #14181F;
+  --walnut-light: #1E2530;
+  --paper: #D7DCE3;
+  --paper-light: #F4F6F8;
+  --pin-red: #3B6FD1;
+  --lane-green: #2A3F5F;
+  --brass: #6C90C7;
+  --ink: #1A1F28;
+  --ink-soft: #5C6573;
 
   --display: 'Oswald', sans-serif;
   --body: 'Inter', sans-serif;
